@@ -14,7 +14,7 @@ MonoBehaviour:
   AppID: d4830ebe-e49a-4691-8f09-3c7e74213c5a
   VoiceAppID: 
   ChatAppID: a9ba9ba4-e12c-4569-90f5-a4078e73028d
-  HostType: 3
+  HostType: 1
   PreferredRegion: 0
   EnabledRegions: -1
   Protocol: 0
@@ -42,4 +42,9 @@ MonoBehaviour:
   - RequestForPickupItems
   - RequestForPickupTimes
   - TaggedPlayer
+  - Cast
+  - MeleeAttack
+  - Death
+  - TakeDamage
+  - Attack
   DisableAutoOpenWizard: 1

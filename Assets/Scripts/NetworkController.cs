@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class NetworkController : MonoBehaviour {
 
-	public string PlayerPrefabName;
+	public GameObject Player;
+	public int SendRate;
+
+	public static float NetworkLerp = 15;
 
 	// Use this for initialization
 	void Start () {
 		PhotonNetwork.ConnectUsingSettings ("0.1");
-
+		PhotonNetwork.sendRateOnSerialize = SendRate;
 	}
 
 	public void OnJoinedLobby(){
@@ -21,7 +24,6 @@ public class NetworkController : MonoBehaviour {
 	}
 
 	void OnJoinedRoom(){
-		print ("HERE");
-		GameObject player = PhotonNetwork.Instantiate (PlayerPrefabName, Vector3.zero, Quaternion.identity,0);
+		GameObject player = PhotonNetwork.Instantiate (Player.name, Vector3.zero, Quaternion.identity,0);
 	}
 }

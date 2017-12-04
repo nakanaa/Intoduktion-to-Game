@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : Photon.MonoBehaviour {
+
+	public GameObject PlayerCamera;
 
 	[Header ("Player Stats")]
 	public int Health;
@@ -21,25 +24,37 @@ public class PlayerController : MonoBehaviour {
 	private bool freezeMovement;
 
 	private const float inputTreshold = 0.1f;
+	private bool isGrounded = true;
+
+	private Vector3 networkPos;
 
 	void Start ()
 	{
 		anim = GetComponent<Animator> ();
 		rb2d = GetComponent<Rigidbody2D> ();
+
+		if (photonView.isMine)
+		{	
+			GameObject camera = Instantiate (PlayerCamera);
+			camera.GetComponent<DeadzoneCamera> ().target = gameObject.GetComponent<Renderer> ();
+		} 
+		else
+		{
+			GetComponent<Rigidbody2D> ().isKinematic = true;
+		}
 	}	
 
 	void Update ()
 	{
-		rb2d.gravityScale = gravityScale;
-
-		UserInput ();
+		if (photonView.isMine) {
+			UserInput ();
+		} else {
+			transform.position = Vector3.Lerp (transform.position, networkPos, NetworkController.NetworkLerp * Time.deltaTime);
+		}
 	}
 
 	private void UserInput()
-	{
-		
-		// Movement //
-
+	{		
 		if (!freezeMovement)
 		{
 			rb2d.velocity = new Vector2 (Input.GetAxis ("Horizontal") * MovementSpeed, rb2d.velocity.y);		
@@ -61,19 +76,20 @@ public class PlayerController : MonoBehaviour {
 
 			if (Input.GetButtonDown ("Jump")) 
 			{
-				rb2d.velocity = new Vector2 (Input.GetAxis ("Horizontal") * MovementSpeed, JumpForce);
+				if (isGrounded) {
+					rb2d.velocity = new Vector2 (Input.GetAxis ("Horizontal") * MovementSpeed, JumpForce);
+					isGrounded = false;
+				}
 			}
 		}
 
-		// Interactions //
-
 		if (Input.GetButtonDown ("Melee")) 
 		{
-			anim.SetTrigger ("MeleeAttack");
+			photonView.RPC ("MeleeAttack", PhotonTargets.All);
 		} 
 		else if (Input.GetButtonDown ("Cast")) 
 		{
-			anim.SetTrigger ("Cast");
+			photonView.RPC ("Cast", PhotonTargets.All);
 		} 
 		else if (Input.GetButton ("Block")) 
 		{
@@ -85,12 +101,20 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	private void Cast()
+	[PunRPC]
+	public void MeleeAttack()
 	{
+		anim.SetTrigger ("MeleeAttack");
+	}
+
+	[PunRPC]
+	public void Cast()
+	{
+		anim.SetTrigger ("Cast");
 		CurrentSpell.GetComponent<Spellcast> ().CastSpell ();
 	}
 
-	private void Block(bool block)
+	public void Block(bool block)
 	{
 		freezeMovement = block;
 		anim.SetBool ("Block",block);
@@ -100,7 +124,29 @@ public class PlayerController : MonoBehaviour {
 	{
 		object[] o = (object[])args;
 		Health -= (int)o[0];
-		//Instantiate ((Object)OnHitEffect,transform.position, Quaternion.identity, null);
 		GetComponent<Rigidbody2D> ().AddForce ((Vector2)o[1]*-(int)o[0],ForceMode2D.Impulse);
+	}
+
+	void OnCollisionEnter2D(Collision2D collision)
+	{
+		isGrounded = true;
+	}
+
+	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	{
+		if (stream.isWriting)
+		{
+			stream.SendNext (transform.position);
+			stream.SendNext (transform.rotation);
+			stream.SendNext (anim.GetBool("Run"));
+			stream.SendNext (anim.GetBool("Block"));
+		} 
+		else 
+		{
+			networkPos = (Vector3)stream.ReceiveNext ();
+			transform.rotation = (Quaternion)stream.ReceiveNext ();
+			anim.SetBool ("Run", (bool)stream.ReceiveNext ());
+			anim.SetBool ("Block", (bool)stream.ReceiveNext ());
+		}
 	}
 }

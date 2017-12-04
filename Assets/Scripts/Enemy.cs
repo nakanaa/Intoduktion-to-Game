@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon;
 
-public class Enemy : MonoBehaviour {
+public class Enemy : Photon.MonoBehaviour {
 
 	[Header ("Enemy Stats")]
 	public int Health;
@@ -13,39 +14,60 @@ public class Enemy : MonoBehaviour {
 	[Header ("Enemy Behaviour")]
 	public float DistanceToAwake;
 	public float DistanceToAttack;
-
-	public GameObject OnHitEffect;
+	public float AttackLoopTime;
+	private float lastAttackLoopTime;
 
 	private GameObject target;
 	private Animator anim;
 
-	void Start(){
+	private Vector3 networkPos;
+
+	void Start()
+	{
+		networkPos = transform.position;
+
 		anim = GetComponent<Animator> ();
 	}
 	
-	void Update () {
-		if (Health <= 0) {
-			BeforeDeath ();
-		} else {
-			EnemyBehaviour ();
+	void Update () 
+	{
+		if (photonView.isMine) 
+		{
+			AILoop ();
+		} 
+		else
+		{
+			transform.position = Vector3.Lerp (transform.position, networkPos, NetworkController.NetworkLerp * Time.deltaTime);
 		}
 	}
 
+	private void AILoop(){
 
-
-	private void EnemyBehaviour(){
 		FindClosestTarget ();
-		MoveToTarget ();
 
-		if (Vector2.Distance (target.transform.position, transform.position) < DistanceToAttack) {
-			anim.SetTrigger ("Attack");
+		if (Health <= 0) 
+		{
+			photonView.RPC ("Death", PhotonTargets.AllBuffered);
+		} 
+		else
+		{			
+			if (target != null) 
+			{
+				if (Vector2.Distance (target.transform.position, transform.position) < DistanceToAttack) 
+				{
+					if ((Time.time - lastAttackLoopTime) > AttackLoopTime) 
+					{
+						MoveToTarget ();
+						photonView.RPC ("Attack", PhotonTargets.All);
+						lastAttackLoopTime = Time.time;
+					}
+				} 
+				else
+				{
+					MoveToTarget ();
+				}
+			} 
 		}
-
-	}
-
-
-	public void Attack(){
-		CurrentSpell.GetComponent<Spellcast> ().CastSpell ();
 	}
 
 	private void FindClosestTarget()
@@ -77,11 +99,18 @@ public class Enemy : MonoBehaviour {
 		}
 	}
 
-	private void BeforeDeath()
+	[PunRPC]
+	public void Attack()
+	{
+		anim.SetTrigger ("Attack");
+		CurrentSpell.GetComponent<Spellcast> ().CastSpell ();
+	}
+
+	[PunRPC]
+	public void Death()
 	{
 		anim.SetTrigger ("Death");
 	}
-
 
 	public void TakeDamage(object args)
 	{
@@ -92,5 +121,21 @@ public class Enemy : MonoBehaviour {
 
 	public void Destroy(){
 		Destroy (gameObject);
+	}
+
+	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	{
+		if (stream.isWriting)
+		{
+			stream.SendNext (transform.position);
+			stream.SendNext (transform.rotation);
+			stream.SendNext (anim.GetBool("Run"));
+		} 
+		else 
+		{
+			networkPos = (Vector3)stream.ReceiveNext ();
+			transform.rotation = (Quaternion)stream.ReceiveNext ();
+			anim.SetBool ("Run", (bool)stream.ReceiveNext ());
+		}
 	}
 }

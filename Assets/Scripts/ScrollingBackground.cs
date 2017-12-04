@@ -16,17 +16,20 @@ public class ScrollingBackground : MonoBehaviour {
 	private float lastCameraX;
 
 
-	void Update(){
+	void FixedUpdate(){
 
-		deltaX = Camera.main.transform.position.x - lastCameraX;
-		transform.position += Vector3.right * (deltaX * ParalaxSpeed);
-		lastCameraX = Camera.main.transform.position.x;
+		if (Camera.main != null) 
+		{
+			deltaX = Camera.main.transform.position.x - lastCameraX;
+			transform.position += Vector3.right * (deltaX * ParalaxSpeed);
+			lastCameraX = Camera.main.transform.position.x;
 
 
-		if (LeftObject.position.x > Camera.main.transform.position.x - AdjustMoveUpdate) {
-			ScrollLeft ();
-		} else if (RigthObject.position.x < Camera.main.transform.position.x + AdjustMoveUpdate) {
-			ScrollRight ();
+			if (LeftObject.position.x > Camera.main.transform.position.x - AdjustMoveUpdate) {
+				ScrollLeft ();
+			} else if (RigthObject.position.x < Camera.main.transform.position.x + AdjustMoveUpdate) {
+				ScrollRight ();
+			}
 		}
 	}
 
