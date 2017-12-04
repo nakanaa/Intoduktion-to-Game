@@ -57,14 +57,14 @@ public class PlayerController : Photon.MonoBehaviour {
 	{		
 		if (!freezeMovement)
 		{
-			rb2d.velocity = new Vector2 (Input.GetAxis ("Horizontal") * MovementSpeed, rb2d.velocity.y);		
+			rb2d.velocity = new Vector2 (InputManager.Horizontal * MovementSpeed, rb2d.velocity.y);		
 
-			if (Input.GetAxis ("Horizontal") > inputTreshold) 
+			if (InputManager.Horizontal > inputTreshold) 
 			{
 				anim.SetBool ("Run", true);
 				transform.localEulerAngles = new Vector3 (0, 0, 0);
 			} 
-			else if (Input.GetAxis ("Horizontal") < -inputTreshold) 
+			else if (InputManager.Horizontal < -inputTreshold) 
 			{
 				anim.SetBool ("Run", true);
 				transform.localEulerAngles = new Vector3 (0, 180, 0);
@@ -74,24 +74,28 @@ public class PlayerController : Photon.MonoBehaviour {
 				anim.SetBool ("Run", false);
 			}
 
-			if (Input.GetButtonDown ("Jump")) 
+			if (InputManager.JumpButton) 
 			{
 				if (isGrounded) {
 					rb2d.velocity = new Vector2 (Input.GetAxis ("Horizontal") * MovementSpeed, JumpForce);
 					isGrounded = false;
 				}
+				InputManager.JumpButton = false;
 			}
 		}
 
-		if (Input.GetButtonDown ("Melee")) 
+		if (InputManager.MeleeButton) 
 		{
 			photonView.RPC ("MeleeAttack", PhotonTargets.All);
+			InputManager.MeleeButton = false;
 		} 
-		else if (Input.GetButtonDown ("Cast")) 
+		else if (InputManager.CastButton) 
 		{
 			photonView.RPC ("Cast", PhotonTargets.All);
+			InputManager.CastButton = false;
+
 		} 
-		else if (Input.GetButton ("Block")) 
+		else if (InputManager.BlockButton) 
 		{
 			Block (true);
 		} 

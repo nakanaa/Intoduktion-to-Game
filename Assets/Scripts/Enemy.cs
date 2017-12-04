@@ -47,7 +47,7 @@ public class Enemy : Photon.MonoBehaviour {
 
 		if (Health <= 0) 
 		{
-			photonView.RPC ("Death", PhotonTargets.AllBuffered);
+			photonView.RPC ("Death", PhotonTargets.AllBufferedViaServer);
 		} 
 		else
 		{			
