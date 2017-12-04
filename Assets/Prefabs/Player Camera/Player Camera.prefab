@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4307715540134276}
   - component: {fileID: 20479929077127004}
-  - component: {fileID: 92597258028759710}
   - component: {fileID: 124645909526420594}
   - component: {fileID: 81476570325088506}
   - component: {fileID: 114798200486803370}
@@ -86,13 +85,6 @@ AudioListener:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1272714789727934}
   m_Enabled: 1
---- !u!92 &92597258028759710
-Behaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1272714789727934}
-  m_Enabled: 1
 --- !u!114 &114798200486803370
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -108,11 +100,16 @@ MonoBehaviour:
   deadzone:
     serializedVersion: 2
     x: -7.5
-    y: -9
+    y: -10
     width: 15
-    height: 15
+    height: 20
   smoothPos: {x: 0, y: 0, z: 0}
-  limits: []
+  limits:
+  - serializedVersion: 2
+    x: -500
+    y: -10
+    width: 1000
+    height: 20
 --- !u!124 &124645909526420594
 Behaviour:
   m_ObjectHideFlags: 1

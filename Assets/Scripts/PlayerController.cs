@@ -26,7 +26,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	private const float inputTreshold = 0.1f;
 	private bool isGrounded = true;
 
-	private Vector3 networkPos;
+	public Vector3 networkPos;
 
 	void Start ()
 	{
