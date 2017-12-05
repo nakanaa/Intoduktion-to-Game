@@ -188,6 +188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 20
   MovementSpeed: 1
+  pointsGiven: 100
   CurrentSpell: {fileID: 1554453046137034}
   DistanceToAwake: 10
   DistanceToAttack: 10

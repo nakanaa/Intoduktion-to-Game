@@ -8,6 +8,7 @@ public class Enemy : Photon.MonoBehaviour {
 	[Header ("Enemy Stats")]
 	public int Health;
 	public float MovementSpeed;
+	public int pointsGiven;
 
 	public GameObject CurrentSpell;
 
@@ -122,6 +123,13 @@ public class Enemy : Photon.MonoBehaviour {
 	}
 
 	public void Destroy(){
+		GameObject[] players = GameObject.FindGameObjectsWithTag ("Player");
+		foreach (GameObject player in players)
+		{
+			PlayerController pc = player.GetComponent<PlayerController>();
+			pc.GainScore(pointsGiven);
+		}
+		
 		Destroy (gameObject);
 	}
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon;
 
 public class PlayerController : Photon.MonoBehaviour {
@@ -30,6 +31,8 @@ public class PlayerController : Photon.MonoBehaviour {
 	public Vector3 networkPos;
 
 	public RectTransform HealthBar;
+	public Text scoreText;
+	private int score = 0;
 
 	void Start ()
 	{
@@ -37,6 +40,8 @@ public class PlayerController : Photon.MonoBehaviour {
 		CurrentHealth = MaxHealth;
 		anim = GetComponent<Animator> ();
 		rb2d = GetComponent<Rigidbody2D> ();
+		scoreText = GameObject.Find("Score Text").GetComponent<Text>();
+		GainScore(0);
 
 		if (photonView.isMine)
 		{	
@@ -109,6 +114,12 @@ public class PlayerController : Photon.MonoBehaviour {
 		{
 			Block (false);
 		}
+	}
+
+	public void GainScore(int amount)
+	{
+		score += amount;
+		scoreText.text = "Score: " + score;
 	}
 
 	[PunRPC]
