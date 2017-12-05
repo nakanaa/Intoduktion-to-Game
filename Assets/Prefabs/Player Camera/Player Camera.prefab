@@ -108,7 +108,7 @@ MonoBehaviour:
   - serializedVersion: 2
     x: -500
     y: -10
-    width: 1000
+    width: 4000
     height: 20
 --- !u!124 &124645909526420594
 Behaviour:

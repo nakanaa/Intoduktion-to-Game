@@ -6,16 +6,20 @@ public class NetworkController : MonoBehaviour {
 
 	public GameObject Spawnpoint;
 
-	public GameObject Player;
 	public int SendRate;
 
 	public static float NetworkLerp = 15;
 
 	private bool foundMasterClient;
+
+	private string currentCharacterName;
 	// Use this for initialization
 	void Start () {
+		currentCharacterName = PlayerPrefs.GetString ("Player");
+		currentCharacterName = "Berserker";
 		PhotonNetwork.ConnectUsingSettings ("0.1");
 		PhotonNetwork.sendRateOnSerialize = SendRate;
+
 	}
 
 	public void OnJoinedLobby(){
@@ -28,7 +32,7 @@ public class NetworkController : MonoBehaviour {
 
 	void OnJoinedRoom(){
 		if (PhotonNetwork.player.IsMasterClient) {
-			GameObject player = PhotonNetwork.Instantiate (Player.name, Vector3.zero, Quaternion.identity, 0);
+			GameObject player = PhotonNetwork.Instantiate (currentCharacterName, Vector3.zero, Quaternion.identity, 0);
 			player.transform.position = Spawnpoint.transform.position;
 			foundMasterClient = true;
 		}
@@ -52,7 +56,7 @@ public class NetworkController : MonoBehaviour {
 			{
 				if (master.transform.position != Vector3.zero) 
 				{
-					GameObject player = PhotonNetwork.Instantiate (Player.name, Vector3.zero, Quaternion.identity, 0);
+					GameObject player = PhotonNetwork.Instantiate (currentCharacterName, Vector3.zero, Quaternion.identity, 0);
 					player.transform.position = master.GetComponent<PlayerController>().networkPos;
 					foundMasterClient = true;
 				}

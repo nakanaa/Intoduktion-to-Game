@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ScrollingBackground : MonoBehaviour {
 
+	public float MinX_Position;
+	public float MaxX_Position;
+
 	public Transform RigthObject;
 	public Transform MiddleObject;
 	public Transform LeftObject;
@@ -16,19 +19,22 @@ public class ScrollingBackground : MonoBehaviour {
 	private float lastCameraX;
 
 
+
 	void FixedUpdate(){
 
 		if (Camera.main != null) 
 		{
-			deltaX = Camera.main.transform.position.x - lastCameraX;
-			transform.position += Vector3.right * (deltaX * ParalaxSpeed);
-			lastCameraX = Camera.main.transform.position.x;
+			if (Camera.main.transform.localPosition.x > MinX_Position && Camera.main.transform.localPosition.x < MaxX_Position) {
+				deltaX = Camera.main.transform.position.x - lastCameraX;
+				transform.position += Vector3.right * (deltaX * ParalaxSpeed);
+				lastCameraX = Camera.main.transform.position.x;
 
 
-			if (LeftObject.position.x > Camera.main.transform.position.x - AdjustMoveUpdate) {
-				ScrollLeft ();
-			} else if (RigthObject.position.x < Camera.main.transform.position.x + AdjustMoveUpdate) {
-				ScrollRight ();
+				if (LeftObject.position.x > Camera.main.transform.position.x - AdjustMoveUpdate) {
+					ScrollLeft ();
+				} else if (RigthObject.position.x < Camera.main.transform.position.x + AdjustMoveUpdate) {
+					ScrollRight ();
+				}
 			}
 		}
 	}
