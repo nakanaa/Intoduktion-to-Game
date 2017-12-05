@@ -50,7 +50,7 @@ public class Enemy : Photon.MonoBehaviour {
 			photonView.RPC ("Death", PhotonTargets.AllBufferedViaServer);
 		} 
 		else
-		{			
+		{
 			if (target != null) 
 			{
 				if (Vector2.Distance (target.transform.position, transform.position) < DistanceToAttack) 
@@ -64,7 +64,9 @@ public class Enemy : Photon.MonoBehaviour {
 				} 
 				else
 				{
-					MoveToTarget ();
+					if (Vector2.Distance (target.transform.position, transform.position) < DistanceToAwake) {
+						MoveToTarget ();
+					}
 				}
 			} 
 		}

@@ -347,7 +347,7 @@ Tilemap:
       m_TileColorIndex: 0
       m_ObjectToInstantiate: {fileID: 0}
       m_TileFlags: 1
-      m_ColliderType: 1
+      m_ColliderType: 2
   - first: {x: -30, y: 10, z: 0}
     second:
       m_TileIndex: 8
@@ -431,7 +431,7 @@ Tilemap:
   - m_RefCount: 23
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   - m_RefCount: 1
-    m_Data: {r: 0.80296534, g: 0.5080304, b: 0.51550704, a: 1}
+    m_Data: {r: 0.86704636, g: 0.54575074, b: 0.5930052, a: 1}
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: -30, y: -2, z: 0}

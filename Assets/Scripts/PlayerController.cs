@@ -8,7 +8,8 @@ public class PlayerController : Photon.MonoBehaviour {
 	public GameObject PlayerCamera;
 
 	[Header ("Player Stats")]
-	public int Health;
+	public float MaxHealth;
+	public float CurrentHealth;
 	public float MovementSpeed;
 	public float JumpForce;
 
@@ -28,8 +29,12 @@ public class PlayerController : Photon.MonoBehaviour {
 
 	public Vector3 networkPos;
 
+	public RectTransform HealthBar;
+
 	void Start ()
 	{
+		HealthBar = GameObject.Find ("Red Health Bar").GetComponent<RectTransform> ();
+		CurrentHealth = MaxHealth;
 		anim = GetComponent<Animator> ();
 		rb2d = GetComponent<Rigidbody2D> ();
 
@@ -48,6 +53,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	{
 		if (photonView.isMine) {
 			UserInput ();
+			HealthBar.localScale = new Vector3(CurrentHealth/MaxHealth,1,1);
 		} else {
 			transform.position = Vector3.Lerp (transform.position, networkPos, NetworkController.NetworkLerp * Time.deltaTime);
 		}
@@ -127,7 +133,7 @@ public class PlayerController : Photon.MonoBehaviour {
 	private void TakeDamage(object args)
 	{
 		object[] o = (object[])args;
-		Health -= (int)o[0];
+		CurrentHealth -= (int)o[0];
 		GetComponent<Rigidbody2D> ().AddForce ((Vector2)o[1]*-(int)o[0],ForceMode2D.Impulse);
 	}
 

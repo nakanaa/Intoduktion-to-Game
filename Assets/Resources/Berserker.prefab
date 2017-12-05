@@ -299,13 +299,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerCamera: {fileID: 1272714789727934, guid: 242444666ba770c49b3562a68a51c11c,
     type: 2}
-  Health: 0
+  MaxHealth: 100
+  CurrentHealth: 20
   MovementSpeed: 15
   JumpForce: 10
   gravityScale: 2
   CurrentWeapon: {fileID: 1065014659944240}
   CurrentSpell: {fileID: 1964368591858648}
   networkPos: {x: 0, y: 0, z: 0}
+  HealthBar: {fileID: 0}
 --- !u!114 &114896829909297440
 MonoBehaviour:
   m_ObjectHideFlags: 1
